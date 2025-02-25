@@ -17,5 +17,5 @@ test("handles punctuation, spaces and and other non-alphabetial characters", () 
 });
 
 test("throws error on negative key", () => {
-  expect(caesarCipher("Hello, World", -1))
+  expect(() => caesarCipher("Hello, World", -1)).toThrow(Error);
 })

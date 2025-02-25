@@ -1,50 +1,32 @@
 function isAlphabet(letter) {
-  const charCode = letter.charCodeAt(0);
-  const isLowerCase =
-    charCode >= "a".charCodeAt(0) && charCode <= "z".charCodeAt(0);
-  const isUpperCase =
-    charCode >= "A".charCodeAt(0) && charCode <= "Z".charCodeAt(0);
-  return isLowerCase || isUpperCase;
+  return /[a-zA-Z]/.test(letter);
 }
 
-function calculateSubstitutedLetters(key) {
-  const originalLetters = [];
-  for (let i = "a".charCodeAt(0); i <= "z".charCodeAt(0); i++) {
-    originalLetters.push(String.fromCharCode(i));
-  }
-  
-  const substitutedLetters = new Map();
-  for (let i = 0; i < originalLetters.length; i++) {
-   const index = (i + key) % originalLetters.length;
-   const originalLetter = originalLetters[i];
-   const substitutedLetter = originalLetters[index];
-   substitutedLetters.set(originalLetter, substitutedLetter);
-   substitutedLetters.set(originalLetter.toUpperCase(), substitutedLetter.toUpperCase());
-  }
+function shiftLetter(letter, key) {
+  const alphabet =
+    letter === letter.toLowerCase()
+      ? "abcdefghijklmnopqrstuvwxyz"
+      : "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-  return substitutedLetters;
+  const index = alphabet.indexOf(letter);
+  return alphabet[(index + key) % 26];
 }
-
 
 function caesarCipher(plainText, key) {
   if (plainText === "") {
     return "";
   }
 
-  const substitutedLetters = calculateSubstitutedLetters(key);
-  let cipherText = "";
-  for (const plainTextLetter of plainText) {
-    if (!isAlphabet(plainTextLetter)) {
-      cipherText += plainTextLetter;
-      continue;
-    }
+  if (key < 0) {
+    throw new Error("Key cannot be negative");
+  }
 
-    const cipherTextLetter = substitutedLetters.get(plainTextLetter);
-    cipherText += cipherTextLetter;
+  let cipherText = "";
+  for (const letter of plainText) {
+    cipherText += isAlphabet(letter) ? shiftLetter(letter, key) : letter;
   }
 
   return cipherText;
 }
-
 
 export default caesarCipher;
